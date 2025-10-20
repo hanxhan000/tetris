@@ -5,15 +5,17 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "dev": "nodemon server/server.js"
+    "dev": "nodemon server/server.js",
+    "deploy": "gh-pages -d public"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "mongoose": "^7.5.0"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "nodemon": "^3.0.1"
   }
 }
