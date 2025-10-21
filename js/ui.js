@@ -1,6 +1,10 @@
 // UI模块
 let leaderboardData = [];
 
+// 云端排行榜配置（如需更换为你的云端API，请修改下方URL）
+const LEADERBOARD_URL = 'https://hanxhan000.github.io/tetris/leaderboard.json';
+const LEADERBOARD_SUBMIT_URL = ''; // 若有提交API，请填入；为空时不写云端
+
 // 更新UI数据
 function updateUIData(data) {
     document.getElementById('score').textContent = data.score;
@@ -28,58 +32,40 @@ function updateLeaderboard(data) {
     });
 }
 
-// 从本地存储获取排行榜
+// 从云端获取排行榜（失败则回退到本地存储，不写入默认数据）
 async function fetchLeaderboard() {
     try {
-        // 从本地存储获取数据
-        let leaderboard = JSON.parse(localStorage.getItem('tetrisLeaderboard') || '[]');
-        
-        // 如果没有数据，使用默认数据
-        if (leaderboard.length === 0) {
-            leaderboard = [
-                { name: "玩家A", score: 2500 },
-                { name: "玩家B", score: 2100 },
-                { name: "玩家C", score: 1800 },
-                { name: "玩家D", score: 1500 },
-                { name: "玩家E", score: 1200 },
-                { name: "玩家F", score: 1000 },
-                { name: "玩家G", score: 800 },
-                { name: "玩家H", score: 600 },
-                { name: "玩家I", score: 400 },
-                { name: "玩家J", score: 200 }
-            ];
-            localStorage.setItem('tetrisLeaderboard', JSON.stringify(leaderboard));
-        }
-        
-        updateLeaderboard(leaderboard);
+        const res = await fetch(LEADERBOARD_URL + '?t=' + Date.now(), { cache: 'no-store', mode: 'cors' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const leaderboard = await res.json();
+        updateLeaderboard(Array.isArray(leaderboard) ? leaderboard.slice(0, 10) : []);
     } catch (error) {
-        console.error('获取排行榜失败:', error);
-        updateLeaderboard([]);
+        console.warn('云端排行榜获取失败，回退至本地:', error);
+        const leaderboard = JSON.parse(localStorage.getItem('tetrisLeaderboard') || '[]');
+        updateLeaderboard(leaderboard);
     }
 }
 
 // 提交得分到本地存储
 async function submitScore(name, score) {
     try {
-        // 使用本地存储，因为GitHub Pages不支持后端API
-        console.log(`提交得分: ${name} - ${score}`);
-        
-        // 获取现有排行榜
-        let leaderboard = JSON.parse(localStorage.getItem('tetrisLeaderboard') || '[]');
-        
-        // 添加新分数
-        leaderboard.push({ name, score });
-        
-        // 按分数排序
-        leaderboard.sort((a, b) => b.score - a.score);
-        
-        // 只保留前10名
-        leaderboard = leaderboard.slice(0, 10);
-        
-        // 保存到本地存储
-        localStorage.setItem('tetrisLeaderboard', JSON.stringify(leaderboard));
-        
-        fetchLeaderboard(); // 重新获取排行榜
+        if (LEADERBOARD_SUBMIT_URL) {
+            const res = await fetch(LEADERBOARD_SUBMIT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, score }),
+            });
+            if (!res.ok) throw new Error('提交失败: HTTP ' + res.status);
+        } else {
+            // 无提交API时，保存到本地以便页面内展示，不触及云端数据
+            let leaderboard = JSON.parse(localStorage.getItem('tetrisLeaderboard') || '[]');
+            leaderboard.push({ name, score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 10);
+            localStorage.setItem('tetrisLeaderboard', JSON.stringify(leaderboard));
+        }
+        // 刷新榜单显示（优先云端）
+        fetchLeaderboard();
         return true;
     } catch (error) {
         console.error('提交得分失败:', error);
@@ -103,8 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化游戏
     window.TetrisGame.init();
     window.TetrisGame.setGameOverCallback(showGameOverModal);
-    
-    // 获取排行榜
+
+    // 获取排行榜（云端优先，不再创建默认数据）
     fetchLeaderboard();
     
     // 键盘事件
