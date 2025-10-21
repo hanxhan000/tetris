@@ -191,60 +191,35 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 在游戏区域添加触摸事件监听器
     const gameBoard = document.getElementById('board');
+    let touchTimer = null;
+    let longPressActive = false;
     
     gameBoard.addEventListener('touchstart', (e) => {
-        // 防止页面滚动
-        e.preventDefault();
-        
-        // 记录触摸开始位置
-        if (e.touches.length > 0) {
-            touchStartY = e.touches[0].clientY;
-        }
-        
-        // 设置定时器，长按触发软降
+        // 不再阻止默认滚动，让页面可下滑
+        const touch = e.touches[0];
+        longPressActive = true;
         touchTimer = setTimeout(() => {
-            if (!isSoftDropping) {
-                isSoftDropping = true;
-                window.TetrisGame.startSoftDrop();
+            if (longPressActive && window.TetrisGame && typeof window.TetrisGame.softDrop === 'function') {
+                window.TetrisGame.softDrop();
             }
-        }, 200); // 200ms长按触发
-    }, { passive: false });
-    
-    gameBoard.addEventListener('touchend', (e) => {
-        // 清除定时器
-        if (touchTimer) {
-            clearTimeout(touchTimer);
-            touchTimer = null;
-        }
-        
-        // 停止软降
-        if (isSoftDropping) {
-            isSoftDropping = false;
-            window.TetrisGame.endSoftDrop();
-        }
-    });
+        }, 300);
+    }, { passive: true });
     
     gameBoard.addEventListener('touchmove', (e) => {
-        // 如果在软降过程中移动超过一定距离，则取消软降
-        if (isSoftDropping && e.touches.length > 0) {
-            const touchY = e.touches[0].clientY;
-            const deltaY = Math.abs(touchY - touchStartY);
-            if (deltaY > 20) { // 移动超过20像素则取消软降
-                isSoftDropping = false;
-                if (touchTimer) {
-                    clearTimeout(touchTimer);
-                    touchTimer = null;
-                }
-                window.TetrisGame.endSoftDrop();
-            }
-        }
-        
-        // 如果有定时器，移动时清除它以防止误触发
+        // 滑动时取消长按计时器，允许页面滚动
         if (touchTimer) {
             clearTimeout(touchTimer);
             touchTimer = null;
         }
-    }, { passive: false });
+    }, { passive: true });
+    
+    gameBoard.addEventListener('touchend', () => {
+        longPressActive = false;
+        if (touchTimer) {
+            clearTimeout(touchTimer);
+            touchTimer = null;
+        }
+    }, { passive: true });
     
     // 模态框按钮事件
     document.getElementById('submit-score-btn').addEventListener('click', async () => {

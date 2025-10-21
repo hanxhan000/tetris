@@ -312,9 +312,34 @@ header h1 {
     .game-container {
         grid-template-columns: 1fr;
     }
+    
+    /* 让页面能滚动，避免底部按钮被遮挡 */
+    body {
+        padding-bottom: calc(env(safe-area-inset-bottom) + 150px);
+    }
+    
+    /* 固定移动端控制条到底部，始终可见 */
     .mobile-controls {
         display: grid;
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: calc(env(safe-area-inset-bottom) + 12px);
+        z-index: 1000;
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(6px);
+        border-radius: 12px;
+        padding: 8px;
     }
+    
+    /* 限制canvas最大高度，给底部控件留空间 */
+    #board {
+        aspect-ratio: 1 / 2;
+        max-height: calc(100vh - 240px);
+        width: 100%;
+        height: auto;
+    }
+    
     header h1 {
         font-size: 1.9rem;
     }
