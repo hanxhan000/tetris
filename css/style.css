@@ -310,13 +310,13 @@ header h1 {
 
 @media (max-width: 768px) {
     .game-container {
-        grid-template-columns: 2.8fr 1fr;
+        grid-template-columns: 1fr;
     }
     .mobile-controls {
         display: grid;
     }
     header h1 {
-        font-size: 2rem;
+        font-size: 1.9rem;
     }
     .stat-item {
         padding: 10px 12px;
