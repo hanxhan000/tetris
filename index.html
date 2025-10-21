@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>俄罗斯方块</title>
-    <link rel="stylesheet" href="css/style.css?v=mobile4">
+    <link rel="stylesheet" href="css/style.css?v=mobile5">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>俄罗斯方块</h1>
+            <div class="next-piece-floating">
+                <span class="next-label">下一个方块</span>
+                <canvas id="next-piece-top" width="72" height="72"></canvas>
+            </div>
         </header>
         
         <div class="game-container">
             <div class="game-board">
-                <div class="top-next-piece">
-                    <span class="next-label">下一个方块</span>
-                    <canvas id="next-piece-top" width="120" height="120"></canvas>
-                </div>
+                <!-- 移除之前在画布上方的预览，改为手机端右上角悬浮显示 -->
                 <canvas id="board" width="300" height="600"></canvas>
                 <div class="mobile-controls">
                     <button id="rotate-btn" class="control-btn">↻</button>
@@ -80,7 +81,7 @@
         </div>
     </div>
     
-    <script src="js/game.js?v=mobile4"></script>
-    <script src="js/ui.js?v=mobile4"></script>
+    <script src="js/game.js?v=mobile5"></script>
+    <script src="js/ui.js?v=mobile5"></script>
 </body>
 </html>

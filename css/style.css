@@ -20,6 +20,7 @@ body {
 header {
     text-align: center;
     margin-bottom: 20px;
+    position: relative; /* 使右上角悬浮块可定位到header */
 }
 
 header h1 {
@@ -313,14 +314,14 @@ header h1 {
         grid-template-columns: 1fr;
     }
     
+    /* 手机端右上角显示 */
+    .next-piece-floating {
+        display: flex;
+    }
+    
     /* 让页面能滚动，避免底部按钮被遮挡 */
     body {
         padding-bottom: calc(env(safe-area-inset-bottom) + 150px);
-    }
-    
-    /* 顶部预览在移动端保持可见 */
-    .top-next-piece {
-        margin-bottom: 10px;
     }
     
     /* 固定移动端控制条到底部，始终可见 */
@@ -357,4 +358,24 @@ header h1 {
     .game-container {
         grid-template-columns: 1fr;
     }
+}
+
+/* 顶部右上角悬浮“下一个方块” */
+.next-piece-floating {
+    display: none; /* 默认桌面端隐藏，仅移动端显示 */
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    align-items: center;
+    gap: 8px;
+}
+.next-piece-floating .next-label {
+    color: #fff;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+#next-piece-top {
+    background-color: #f8f9fa;
+    border: 2px solid #ddd;
+    border-radius: 8px;
 }
