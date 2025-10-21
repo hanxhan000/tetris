@@ -173,16 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('drop-btn').addEventListener('click', () => {
         window.TetrisGame.playerHardDrop();
     });
-
-    // 移动端开始按钮
-    const startMobileBtn = document.getElementById('start-mobile-btn');
-    if (startMobileBtn) {
-        startMobileBtn.addEventListener('click', () => {
-            window.TetrisGame.startGame();
-            const startBtn = document.getElementById('start-btn');
-            if (startBtn) startBtn.textContent = '继续游戏';
-        });
-    }
     
     // 移动端长按屏幕加速下落功能
     let touchStartY = 0;

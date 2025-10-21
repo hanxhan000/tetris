@@ -29,19 +29,18 @@ header h1 {
 }
 
 .game-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 16px;
+    align-items: start;
 }
 
 .game-board {
-    flex: 1;
-    min-width: 300px;
-    max-width: 400px;
+    width: 100%;
+    min-width: 280px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
-    padding: 15px;
+    padding: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
@@ -51,14 +50,16 @@ header h1 {
     border: 2px solid #ddd;
     background-color: #f8f9fa;
     border-radius: 8px;
+    width: 100%;
+    height: auto;
 }
 
 .mobile-controls {
     display: none;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 56px);
     gap: 10px;
-    margin-top: 15px;
+    margin-top: 12px;
 }
 
 .control-btn {
@@ -71,6 +72,7 @@ header h1 {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-height: 48px;
 }
 
 .control-btn:active {
@@ -114,12 +116,11 @@ header h1 {
 }
 
 .side-panel {
-    flex: 1;
-    min-width: 300px;
-    max-width: 400px;
+    width: 100%;
+    min-width: 220px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .info-section, .controls-section, .leaderboard-section {
@@ -301,29 +302,29 @@ header h1 {
 }
 
 /* 响应式设计 */
+@media (max-width: 992px) {
+    .game-container {
+        grid-template-columns: 2.6fr 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .game-container {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 2.8fr 1fr;
     }
-    
-    .game-board {
-        max-width: 100%;
-    }
-    
-    .side-panel {
-        max-width: 100%;
-    }
-    
     .mobile-controls {
         display: grid;
     }
-    
     header h1 {
         font-size: 2rem;
     }
-    
     .stat-item {
         padding: 10px 12px;
+    }
+}
+
+@media (max-width: 540px) {
+    .game-container {
+        grid-template-columns: 1fr;
     }
 }
