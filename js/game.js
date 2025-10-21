@@ -87,7 +87,11 @@ let dropStart = 0; // 用于加速下落功能
 // 初始化画布
 ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 if (nextPieceCtx) nextPieceCtx.scale(BLOCK_SIZE/2, BLOCK_SIZE/2);
-if (nextPieceTopCtx) nextPieceTopCtx.scale(BLOCK_SIZE/2, BLOCK_SIZE/2);
+// 顶部预览使用自适应比例：以6格为基准，动态缩放到画布尺寸
+if (nextPieceTopCtx && nextPieceTopCanvas) {
+    const scaleTop = Math.min(nextPieceTopCanvas.width, nextPieceTopCanvas.height) / 6; // 目标6格
+    nextPieceTopCtx.scale(scaleTop, scaleTop);
+}
 
 // 创建矩阵
 function createMatrix(width, height) {
@@ -129,16 +133,27 @@ function drawMatrix(matrix, offset, context = ctx) {
 
 // 绘制下一个方块
 function drawNextPiece() {
+    // 清理侧栏预览
     if (nextPieceCtx) {
+        nextPieceCtx.save();
+        nextPieceCtx.setTransform(1, 0, 0, 1, 0, 0);
+        nextPieceCtx.clearRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
         nextPieceCtx.fillStyle = '#f8f9fa';
         nextPieceCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+        nextPieceCtx.restore();
     }
+    // 清理顶部预览
     if (nextPieceTopCtx) {
+        nextPieceTopCtx.save();
+        nextPieceTopCtx.setTransform(1, 0, 0, 1, 0, 0);
+        nextPieceTopCtx.clearRect(0, 0, nextPieceTopCanvas.width, nextPieceTopCanvas.height);
         nextPieceTopCtx.fillStyle = '#f8f9fa';
         nextPieceTopCtx.fillRect(0, 0, nextPieceTopCanvas.width, nextPieceTopCanvas.height);
+        nextPieceTopCtx.restore();
     }
     
     if (player.nextPiece) {
+        // 以6x6网格居中显示方块
         const offsetX = (6 - player.nextPiece[0].length) / 2;
         const offsetY = (6 - player.nextPiece.length) / 2;
         if (nextPieceCtx) drawMatrix(player.nextPiece, { x: offsetX, y: offsetY }, nextPieceCtx);
