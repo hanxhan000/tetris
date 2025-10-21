@@ -185,39 +185,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // 移动端长按屏幕加速下落功能
-    let touchStartY = 0;
-    let isSoftDropping = false;
-    let touchTimer = null;
-    
-    // 在游戏区域添加触摸事件监听器
+    // 统一触摸逻辑：长按触发加速，下滑/松手结束；允许页面滚动
     const gameBoard = document.getElementById('board');
-    let touchTimer = null;
+    let longPressTimer = null;
     let longPressActive = false;
     
-    gameBoard.addEventListener('touchstart', (e) => {
-        // 不再阻止默认滚动，让页面可下滑
-        const touch = e.touches[0];
+    gameBoard.addEventListener('touchstart', () => {
         longPressActive = true;
-        touchTimer = setTimeout(() => {
-            if (longPressActive && window.TetrisGame && typeof window.TetrisGame.softDrop === 'function') {
-                window.TetrisGame.softDrop();
+        // 250ms 长按后开始软降
+        longPressTimer = setTimeout(() => {
+            if (longPressActive && window.TetrisGame && typeof window.TetrisGame.startSoftDrop === 'function') {
+                window.TetrisGame.startSoftDrop();
             }
-        }, 300);
+        }, 250);
     }, { passive: true });
     
-    gameBoard.addEventListener('touchmove', (e) => {
-        // 滑动时取消长按计时器，允许页面滚动
-        if (touchTimer) {
-            clearTimeout(touchTimer);
-            touchTimer = null;
+    gameBoard.addEventListener('touchmove', () => {
+        // 移动时取消长按计时器，避免误触发
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
         }
+        // 不阻止默认，让页面可以滚动
     }, { passive: true });
     
     gameBoard.addEventListener('touchend', () => {
         longPressActive = false;
-        if (touchTimer) {
-            clearTimeout(touchTimer);
-            touchTimer = null;
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+        if (window.TetrisGame && typeof window.TetrisGame.endSoftDrop === 'function') {
+            window.TetrisGame.endSoftDrop();
         }
     }, { passive: true });
     

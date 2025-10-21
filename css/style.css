@@ -318,6 +318,11 @@ header h1 {
         padding-bottom: calc(env(safe-area-inset-bottom) + 150px);
     }
     
+    /* 顶部预览在移动端保持可见 */
+    .top-next-piece {
+        margin-bottom: 10px;
+    }
+    
     /* 固定移动端控制条到底部，始终可见 */
     .mobile-controls {
         display: grid;

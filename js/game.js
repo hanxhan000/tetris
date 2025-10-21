@@ -63,8 +63,10 @@ const SHAPES = [
 // 游戏变量
 let canvas = document.getElementById('board');
 let nextPieceCanvas = document.getElementById('next-piece');
+let nextPieceTopCanvas = document.getElementById('next-piece-top');
 let ctx = canvas.getContext('2d');
-let nextPieceCtx = nextPieceCanvas.getContext('2d');
+let nextPieceCtx = nextPieceCanvas ? nextPieceCanvas.getContext('2d') : null;
+let nextPieceTopCtx = nextPieceTopCanvas ? nextPieceTopCanvas.getContext('2d') : null;
 let board = createMatrix(COLS, ROWS);
 let player = {
     pos: { x: 0, y: 0 },
@@ -84,7 +86,8 @@ let dropStart = 0; // 用于加速下落功能
 
 // 初始化画布
 ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
-nextPieceCtx.scale(BLOCK_SIZE/2, BLOCK_SIZE/2);
+if (nextPieceCtx) nextPieceCtx.scale(BLOCK_SIZE/2, BLOCK_SIZE/2);
+if (nextPieceTopCtx) nextPieceTopCtx.scale(BLOCK_SIZE/2, BLOCK_SIZE/2);
 
 // 创建矩阵
 function createMatrix(width, height) {
@@ -126,15 +129,20 @@ function drawMatrix(matrix, offset, context = ctx) {
 
 // 绘制下一个方块
 function drawNextPiece() {
-    nextPieceCtx.fillStyle = '#f8f9fa';
-    nextPieceCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+    if (nextPieceCtx) {
+        nextPieceCtx.fillStyle = '#f8f9fa';
+        nextPieceCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+    }
+    if (nextPieceTopCtx) {
+        nextPieceTopCtx.fillStyle = '#f8f9fa';
+        nextPieceTopCtx.fillRect(0, 0, nextPieceTopCanvas.width, nextPieceTopCanvas.height);
+    }
     
     if (player.nextPiece) {
-        // 居中绘制
         const offsetX = (6 - player.nextPiece[0].length) / 2;
         const offsetY = (6 - player.nextPiece.length) / 2;
-        
-        drawMatrix(player.nextPiece, { x: offsetX, y: offsetY }, nextPieceCtx);
+        if (nextPieceCtx) drawMatrix(player.nextPiece, { x: offsetX, y: offsetY }, nextPieceCtx);
+        if (nextPieceTopCtx) drawMatrix(player.nextPiece, { x: offsetX, y: offsetY }, nextPieceTopCtx);
     }
 }
 

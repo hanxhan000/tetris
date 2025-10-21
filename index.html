@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>俄罗斯方块</title>
-    <link rel="stylesheet" href="css/style.css?v=mobile3">
+    <link rel="stylesheet" href="css/style.css?v=mobile4">
 </head>
 <body>
     <div class="container">
@@ -14,6 +14,10 @@
         
         <div class="game-container">
             <div class="game-board">
+                <div class="top-next-piece">
+                    <span class="next-label">下一个方块</span>
+                    <canvas id="next-piece-top" width="120" height="120"></canvas>
+                </div>
                 <canvas id="board" width="300" height="600"></canvas>
                 <div class="mobile-controls">
                     <button id="rotate-btn" class="control-btn">↻</button>
