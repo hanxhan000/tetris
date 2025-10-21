@@ -23,21 +23,19 @@ header {
     position: relative;
 }
 
-/* 调整桌面布局比例，缩小左侧 */
+/* 调整桌面布局比例：左侧更大、右侧更小 */
 .game-container {
     display: grid;
-    /* 左列采用贴合内容的宽度，右列自适应填满剩余空间 */
-    grid-template-columns: fit-content(480px) minmax(360px, 1fr);
-    gap: 0; /* 去除左右区域间隔 */
+    grid-template-columns: minmax(520px, 2fr) minmax(320px, 1fr);
+    gap: 0;
     align-items: start;
 }
 
 .game-board {
-    /* 让容器按内容宽度贴合，避免占满整列导致留白 */
-    width: auto;
+    width: 100%;
     min-width: 280px;
-    max-width: 420px; /* 限制左侧最大宽度，避免过大 */
-    position: relative; /* 使手机端右上角图标可相对定位 */
+    max-width: 680px;
+    position: relative;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     padding: 12px;
@@ -46,9 +44,8 @@ header {
 
 @media (max-width: 992px) {
     .game-container {
-        /* 中屏仍保持贴合内容的策略 */
-        grid-template-columns: fit-content(460px) minmax(320px, 1fr);
-        gap: 0; /* 保持无间隔 */
+        grid-template-columns: minmax(480px, 1.6fr) minmax(300px, 1fr);
+        gap: 0;
     }
 }
 
