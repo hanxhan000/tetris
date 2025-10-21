@@ -1,5 +1,6 @@
 // UI模块
 let leaderboardData = [];
+let isGameOver = false; // 记录是否处于游戏结束状态
 
 // 云端排行榜配置（如需更换为你的云端API，请修改下方URL）
 const LEADERBOARD_URL = 'https://hanxhan000.github.io/tetris/leaderboard.json';
@@ -75,6 +76,7 @@ async function submitScore(name, score) {
 
 // 显示游戏结束模态框
 function showGameOverModal(score) {
+    isGameOver = true;
     document.getElementById('final-score').textContent = score;
     document.getElementById('game-over-modal').classList.remove('hidden');
 }
@@ -130,8 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 按钮事件
     document.getElementById('start-btn').addEventListener('click', () => {
-        window.TetrisGame.startGame();
-        document.getElementById('start-btn').textContent = '继续游戏';
+        if (isGameOver) {
+            // 游戏结束后，开始=重新开始
+            hideGameOverModal();
+            window.TetrisGame.resetGame();
+            isGameOver = false;
+            window.TetrisGame.startGame();
+            document.getElementById('start-btn').textContent = '继续游戏';
+        } else {
+            window.TetrisGame.startGame();
+            document.getElementById('start-btn').textContent = '继续游戏';
+        }
     });
     
     document.getElementById('pause-btn').addEventListener('click', () => {
@@ -139,7 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('reset-btn').addEventListener('click', () => {
+        hideGameOverModal();
         window.TetrisGame.resetGame();
+        isGameOver = false;
         document.getElementById('start-btn').textContent = '开始游戏';
     });
     
@@ -164,7 +177,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const startMobileBtn = document.getElementById('start-mobile-btn');
     if (startMobileBtn) {
         startMobileBtn.addEventListener('click', () => {
-            window.TetrisGame.startGame();
+            if (isGameOver) {
+                hideGameOverModal();
+                window.TetrisGame.resetGame();
+                isGameOver = false;
+                window.TetrisGame.startGame();
+            } else {
+                window.TetrisGame.startGame();
+            }
             const startBtn = document.getElementById('start-btn');
             if (startBtn) startBtn.textContent = '继续游戏';
         });

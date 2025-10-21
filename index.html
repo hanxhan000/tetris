@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>俄罗斯方块</title>
-    <link rel="stylesheet" href="css/style.css?v=mobile7">
+    <link rel="stylesheet" href="css/style.css?v=mobile8">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>俄罗斯方块</h1>
-            <div class="next-piece-floating">
-                <canvas id="next-piece-top" width="60" height="60"></canvas>
-            </div>
+            <!-- 移除手机端右上角图标的header位置 -->
         </header>
         
         <div class="game-container">
             <div class="game-board">
-                <!-- 移除之前在画布上方的预览，改为手机端右上角悬浮显示 -->
+                <!-- 将手机端右上角图标移动到游戏区域右上角 -->
+                <div class="next-piece-floating">
+                    <canvas id="next-piece-top" width="60" height="60"></canvas>
+                </div>
                 <canvas id="board" width="300" height="600"></canvas>
                 <div class="mobile-controls">
                     <button id="rotate-btn" class="control-btn">↻</button>
@@ -80,7 +81,7 @@
         </div>
     </div>
     
-    <script src="js/game.js?v=mobile7"></script>
-    <script src="js/ui.js?v=mobile7"></script>
+    <script src="js/game.js?v=mobile8"></script>
+    <script src="js/ui.js?v=mobile8"></script>
 </body>
 </html>
