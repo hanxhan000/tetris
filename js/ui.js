@@ -6,6 +6,23 @@ let isGameOver = false; // 记录是否处于游戏结束状态
 const LEADERBOARD_URL = 'https://hanxhan000.github.io/tetris/leaderboard.json';
 const LEADERBOARD_SUBMIT_URL = ''; // 若有提交API，请填入；为空时不写云端
 
+// 预览自检：支持通过 URL 参数 `mockLB=1` 使用内置模拟数据，不影响云端
+const LBParams = new URLSearchParams(window.location.search);
+const LB_MOCK = LBParams.get('mockLB') === '1';
+const MOCK_LEADERBOARD = [
+  { name: '测试玩家A', score: 2450 },
+  { name: '测试玩家B', score: 1800 },
+  { name: '测试玩家C', score: 1500 },
+  { name: '测试玩家D', score: 1200 },
+  { name: '测试玩家E', score: 990 },
+  { name: '测试玩家F', score: 860 },
+  { name: '测试玩家G', score: 780 },
+  { name: '测试玩家H', score: 720 },
+  { name: '测试玩家I', score: 650 },
+  { name: '测试玩家J', score: 600 },
+  { name: '测试玩家K', score: 560 },
+];
+
 // 更新UI数据
 function updateUIData(data) {
     document.getElementById('score').textContent = data.score;
@@ -13,22 +30,25 @@ function updateUIData(data) {
     document.getElementById('lines').textContent = data.lines;
 }
 
-// 更新排行榜
+// 更新排行榜（确保按分数降序Top10展示）
 function updateLeaderboard(data) {
-    leaderboardData = data;
+    const sorted = (Array.isArray(data) ? data : []).slice().sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
+    leaderboardData = sorted;
     const leaderboardList = document.getElementById('leaderboard-list');
     leaderboardList.innerHTML = '';
     
-    if (data.length === 0) {
+    if (sorted.length === 0) {
         const li = document.createElement('li');
         li.textContent = '暂无数据';
         leaderboardList.appendChild(li);
         return;
     }
     
-    data.forEach((entry, index) => {
+    sorted.forEach((entry, index) => {
+        const safeName = String(entry.name || '匿名').slice(0, 20);
+        const safeScore = Number(entry.score || 0);
         const li = document.createElement('li');
-        li.innerHTML = `<span>${index + 1}. ${entry.name}</span> <span>${entry.score}</span>`;
+        li.innerHTML = `<span>${index + 1}. ${safeName}</span> <span>${safeScore}</span>`;
         leaderboardList.appendChild(li);
     });
 }
@@ -36,10 +56,15 @@ function updateLeaderboard(data) {
 // 从云端获取排行榜（失败则回退到本地存储，不写入默认数据）
 async function fetchLeaderboard() {
     try {
+        if (LB_MOCK) {
+            // 仅用于本地/预览自检，不触碰云端数据
+            updateLeaderboard(MOCK_LEADERBOARD);
+            return;
+        }
         const res = await fetch(LEADERBOARD_URL + '?t=' + Date.now(), { cache: 'no-store', mode: 'cors' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const leaderboard = await res.json();
-        updateLeaderboard(Array.isArray(leaderboard) ? leaderboard.slice(0, 10) : []);
+        updateLeaderboard(Array.isArray(leaderboard) ? leaderboard : []);
     } catch (error) {
         console.warn('云端排行榜获取失败，回退至本地:', error);
         const leaderboard = JSON.parse(localStorage.getItem('tetrisLeaderboard') || '[]');
