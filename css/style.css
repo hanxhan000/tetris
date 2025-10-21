@@ -27,7 +27,7 @@ header {
 .game-container {
     display: grid;
     grid-template-columns: 1.4fr 1fr; /* 原2.2fr -> 1.4fr，平衡左右 */
-    gap: 16px;
+    gap: 0; /* 去除左右区域间隔 */
     align-items: start;
 }
 
@@ -302,7 +302,8 @@ header {
 /* 响应式设计 */
 @media (max-width: 992px) {
     .game-container {
-        grid-template-columns: 1.2fr 1fr; /* 原2.6fr，保持更均衡 */
+        grid-template-columns: 1.2fr 1fr;
+        gap: 0; /* 保持无间隔 */
     }
 }
 
@@ -311,23 +312,20 @@ header {
         grid-template-columns: 1fr;
     }
     
-    /* 手机端右上角显示（相对.game-board定位） */
     .next-piece-floating { display: flex; }
     
-    /* 控制主视区在一屏内：限制画布高度并压缩控制区 */
+    /* 移除强制纵横比，避免比例失调，由JS动态适配 */
     #board {
-        aspect-ratio: 1 / 2;
-        max-height: 60vh; /* 画布高度不超过60%视口 */
+        /* aspect-ratio: 1 / 2; */
+        max-height: 65vh; /* 稍微放大以提升可视性 */
         width: 100%;
         height: auto;
+        image-rendering: pixelated; /* 提升缩放清晰度 */
     }
     
     header h1 { font-size: 1.6rem; }
-    
-    /* 隐藏侧栏‘下一个方块’标题文本，仅保留预览 */
     .next-piece-container h3 { display: none; }
     
-    /* 固定移动端控制条到底部，缩小高度与间距 */
     .mobile-controls {
         display: grid;
         position: fixed;

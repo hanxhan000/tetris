@@ -1,7 +1,7 @@
 // 游戏常量
-const COLS = 10;
-const ROWS = 20;
-const BLOCK_SIZE = 30;
+let COLS = 10;
+let ROWS = 20;
+let BLOCK_SIZE = 30; // 将在配置函数中动态调整
 const COLORS = [
     null,
     '#FF6B6B', // I - 红色
@@ -212,6 +212,17 @@ function draw() {
     drawBoard();
     drawMatrix(player.matrix, player.pos);
 }
+
+// 在窗口尺寸变化时，调整棋盘缩放以保持清晰比例
+window.addEventListener('resize', () => {
+    const wasActive = gameActive;
+    configureBoard();
+    draw();
+    if (wasActive) {
+        // 保持游戏循环继续运行
+        // 不重置状态，避免影响当前游戏
+    }
+});
 
 // 检查碰撞
 function collide(board, player) {
@@ -432,8 +443,35 @@ function update(time = 0) {
     gameAnimation = requestAnimationFrame(update);
 }
 
+// 动态配置棋盘：根据设备调整列行与块尺寸，修正比例
+function configureBoard() {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    COLS = isMobile ? 12 : 10;
+    ROWS = isMobile ? 24 : 20;
+    // 根据当前canvas设置最佳块大小（保证整数像素，避免模糊）
+    const blockW = Math.floor(canvas.width / COLS);
+    const blockH = Math.floor(canvas.height / ROWS);
+    BLOCK_SIZE = Math.max(Math.min(blockW, blockH), 20);
+    // 统一内部像素尺寸为整数倍，确保绘制比例正确
+    canvas.width = COLS * BLOCK_SIZE;
+    canvas.height = ROWS * BLOCK_SIZE;
+    // 重置并应用缩放
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+    if (nextPieceCtx) {
+        nextPieceCtx.setTransform(1, 0, 0, 1, 0, 0);
+        nextPieceCtx.scale(BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+    }
+    if (nextPieceTopCtx && nextPieceTopCanvas) {
+        nextPieceTopCtx.setTransform(1, 0, 0, 1, 0, 0);
+        const scaleTop = Math.min(nextPieceTopCanvas.width, nextPieceTopCanvas.height) / 6;
+        nextPieceTopCtx.scale(scaleTop, scaleTop);
+    }
+}
+
 // 初始化游戏
 function init() {
+    configureBoard();
     board = createMatrix(COLS, ROWS);
     player.score = 0;
     player.level = 1;
